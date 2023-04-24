@@ -1,0 +1,12 @@
+const mongoose =require('mongoose')
+const connectDataBase= ()=>{
+
+        mongoose.connect(process.env.DB_URI,{useNewUrlParser: true, useUnifiedTopology: true})
+        .then(console.log(`DB GOT CONNECTED`))
+        .catch((error) => {
+          console.log(`DB CONNECTION ISSUES`);
+          console.log(error);
+          process.exit(1);
+        });
+}
+module.exports=connectDataBase
