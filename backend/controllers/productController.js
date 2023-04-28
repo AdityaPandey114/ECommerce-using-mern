@@ -4,6 +4,7 @@ const ApiFeatures=require('../utils/Apifeatures')
 //CreateProducts
 exports.createProduct=async (req,res,next)=>{
     try{
+        req.body.user=req.user.id
         console.log("I enter product create");
         const product=await ProductSchema.create(req.body)
         console.log("i exit prodtuct create");

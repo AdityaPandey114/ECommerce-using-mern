@@ -12,9 +12,9 @@ class ApiFeatures {
             $regex: this.querystr.keyword,
             $options: "i",
           },
+          
         }
       : {};
-      console.log(this.querystr.page);
     this.query = this.query.find({ ...keyword });
     return this;
   }

@@ -2,6 +2,7 @@ const mongoose =require('mongoose')
 const validator=require('validator');
 const bcrypt=require('bcryptjs')
 const jwt=require('jsonwebtoken')
+const crypto=require("crypto")
 const userSchema=new mongoose.Schema({
     name:{
         type:String,
@@ -49,13 +50,26 @@ userSchema.pre("save",async function(next){
 })
 
 userSchema.methods.getJWTToken=function(){
-    return jwt.sign({id:this._id},process.env.JWT_SECRET,{
+    const token=jwt.sign({id:this._id},process.env.JWT_SECRET,{
         expiresIn:process.env.JWT_EXPIRE,
 
     })
+    console.log("token :: ",token);
+    return token
     
 }
 userSchema.methods.comparePassword= async function(password){
-    return await bcrypt.compare(password,this.password)
+    const passwordCompare= await bcrypt.compare(password,this.password);
+    return passwordCompare;
+}
+
+userSchema.methods.getResetPasswordToken=function(){
+    //Generate token
+    const resetToken=crypto.randomBytes(20).toString("hex");
+
+    this.resetPasswordToken=crypto.createHash("sha256").update(resetToken).digest("hex");
+    this.resetPasswordExpire=Date.now()+15*60*1000
+    return resetToken;
 }
 module.exports=mongoose.model('userSchema',userSchema);
+//SHA 256 is a part of the SHA 2 family of algorithms, where SHA stands for Secure Hash Algorithm

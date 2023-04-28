@@ -11,6 +11,7 @@ exports.isAuthenticatedUser= async (req,res,next)=>{
         }
         console.log("token : ",token );
         const decodedData=await jwt.verify(token,process.env.JWT_SECRET)
+        console.log("decodedData : ",decodedData);
         req.user=await userSchema.findById(decodedData.id)
 
         next()
@@ -18,4 +19,15 @@ exports.isAuthenticatedUser= async (req,res,next)=>{
     catch(error){
 
     }
+}
+
+exports.autharizedRoles=(...roles)=>{
+
+    return (req,res,next)=>{
+        if(!roles.includes(req.user.role)){
+            next(new ErrorHandler(`Role ${req.user.role} is not allowed to access this resource`,403))
+        }
+        console.log("Roles : ",req.user.role);
+        next();
+    };
 }
